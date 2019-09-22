@@ -1,7 +1,9 @@
 export default {
   default: {
-    'padding': '1px 2px',
-    border: 'solid 1px #000'
+    'padding': '0px 2px',
+    border: 'solid 1px #000',
+    backgroundColor: 'transparent',
+    color: 'white'
   },
   over: {
     cursor: 'pointer',

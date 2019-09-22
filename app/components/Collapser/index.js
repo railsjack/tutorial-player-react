@@ -1,8 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import styles from './styles';
-import routes from '../../constants/routes';
 
 type Props = {
 };
@@ -17,11 +15,12 @@ export default class Collapser extends Component<Props> {
     }
   }
 
-  makeOver() {
-    this.setState({isOver: true})
+  makeOver = () => {
+    this.setState({ isOver: true })
   }
-  makeNormal() {
-    this.setState({isOver: false})
+
+  makeNormal = () => {
+    this.setState({ isOver: false })
   }
 
   render() {
@@ -29,18 +28,18 @@ export default class Collapser extends Component<Props> {
       isOver
     } = this.state;
     return (
-      <i
-      style={
-        {
-          ...this.props.style,
-          ...styles.default,
-          ...(isOver?styles.over: {})
+      <button
+        style={
+          {
+            ...this.props.style,
+            ...styles.default,
+            ...(isOver ? styles.over : {})
+          }
         }
-      }
-      onMouseEnter={()=>this.makeOver()} onMouseLeave={()=>this.makeNormal()}
-      className='fa fa-bars'
-      onClick={this.props.onClick}
-      />
+        onMouseEnter={() => this.makeOver()} onMouseLeave={() => this.makeNormal()}
+        onClick={this.props.onClick}
+      ><i className='fa fa-bars' style={{fontSize: '14pt'}}/>
+      </button>
     );
   }
 }
