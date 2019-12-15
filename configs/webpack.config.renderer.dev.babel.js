@@ -65,7 +65,8 @@ export default merge.smart(baseConfig, {
         use: {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: true
+            cacheDirectory: true,
+            plugins: ['react-hot-loader/babel'],
           }
         }
       },
