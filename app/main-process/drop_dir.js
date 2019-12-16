@@ -28,12 +28,20 @@ ipcMain.on('Request', (event, dirPath) => {
     });
   } else {
     createTutorialList(dirPath, data => {
-      event.sender.send('Response', {
-        code: 201,
-        reason: 'CREATED',
-        message: 'The list is created successfully!',
-        data: { ...data, path: dirPath }
-      });
+      if (data.result) {
+        event.sender.send('Response', {
+          code: 201,
+          reason: 'CREATED',
+          message: 'The list is created successfully!',
+          data: { ...data, path: dirPath }
+        });
+      } else {
+        event.sender.send('Response', {
+          code: 402,
+          reason: data.reason,
+          data: null
+        });
+      }
     });
   }
 });

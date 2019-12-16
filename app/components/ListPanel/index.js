@@ -2,20 +2,23 @@ import React, { FC, useEffect } from 'react';
 import styles from './styles';
 type Props = {
   defaultPath: string,
-  onSelectedPath: (selectedPath: string) => void
+  onSelectPath: (selectedPath: string) => void
 };
 
 const ListPanel: FC<Props> = props => {
+  const { ipcRenderer } = require('electron');
+
   const setDir = () => {
     const app = require('electron').remote.app;
     const defaultPath = props.defaultPath || app.getPath('documents');
     const dialog = require('electron').remote.dialog;
-    const selectedPath = dialog.showOpenDialog(null, {
+    const selectedPath = dialog.showOpenDialogSync(null, {
       properties: ['openDirectory'],
       defaultPath
     });
-    if(selectedPath) {
-      props.onSelectedPath && props.onSelectedPath(selectedPath[0]);
+
+    if (selectedPath) {
+      props.onSelectPath && props.onSelectPath(selectedPath[0]);
     }
   };
 

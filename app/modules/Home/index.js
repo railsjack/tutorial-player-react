@@ -8,11 +8,10 @@ import { setDefaultPath, SET_DEFAULT_PATH } from './_actions';
 
 type Props = {};
 
-const { ipcRenderer } = require('electron');
-
 const Home: FC<Props> = props => {
   const mainState = useSelector(state => state.Main);
   const dispatch = useDispatch();
+  const { ipcRenderer } = require('electron');
 
   const componentDidMount = () => {
     let selectedPath = '';
@@ -25,13 +24,19 @@ const Home: FC<Props> = props => {
         selectedPath = e.dataTransfer.files[0].path;
         ipcRenderer.send('Request', selectedPath);
       } else {
-        alert('You can drop only 1 directory at once.');
+        alert('You can drop only 1 directory at once...');
       }
       return false;
     });
+
+    ipcRenderer.removeListener('Response', () => {});
     ipcRenderer.on('Response', (event, response) => {
       if (response.code !== 201) {
-        alert(response.content);
+        if (response.reason === 'NO_VIDEO_FILES') {
+          alert('There is no any video files on the directory');
+        } else {
+          alert(response.message);
+        }
       } else {
         if (response.data && response.data.path) {
           alert(response.message);
@@ -54,7 +59,7 @@ const Home: FC<Props> = props => {
       <LeftPanel />
       <ListPanel
         defaultPath={mainState.defaultPath}
-        onSelectedPath={onSelectedPathHandler}
+        onSelectPath={onSelectedPathHandler}
       />
       <PlayerPanel />
     </>
