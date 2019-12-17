@@ -5,7 +5,6 @@ import ListPanel from './ListPanel';
 import PlayerPanel from './PlayerPanel';
 import LoadingPanel from './LoadingPanel';
 import Helper from '../../utils/helper';
-import VideoList from './Model/VideoList';
 
 type Props = {};
 

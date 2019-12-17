@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Helper from '../../../utils/helper';
 import { Select, Option } from '../../../components';
+import VideoListManager from '../Model/VideoListManager'
 
 import { setDefaultPath, setVideoInfo } from '../_reducers/home_actions';
 
@@ -61,6 +62,7 @@ const ListPanel: FC<Props> = props => {
       });
     });
     setVideoList(videoList);
+    VideoListManager.setList(videoList);
   };
 
   const selectListByIndex = index => {

@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Helper from '../../../utils/helper';
 import { setDefaultPath, setVideoInfo } from '../_reducers/home_actions';
+import VideoListManager from '../Model/VideoListManager';
 
 import styles from './styles';
 
@@ -34,9 +35,19 @@ const PlayerPanel: FC<Props> = props => {
 
     player.onended = () => {
       Helper.setConf(videoInfo.mp4, 0);
-      const videoInfoCopy = { ...mainState.videoInfo };
-      videoInfoCopy.videoIndex = videoInfoCopy.videoIndex + 1;
+      const videoInfoCopy = {};
+      const videoList = VideoListManager.getList();
+      const nextVideoInfo = videoList[videoInfo.videoIndex + 1];
+
+      videoInfoCopy.videoIndex = videoInfo.videoIndex + 1;
+      videoInfoCopy.mp4 = nextVideoInfo.mp4;
+      videoInfoCopy.subtitle = nextVideoInfo.subtitle;
+      videoInfoCopy.tutorialTitle = '';
+
       dispatch(setVideoInfo(videoInfoCopy));
+      setTimeout(() => {
+        player.play();
+      }, 500);
     };
   }, [mainState.videoInfo]);
 
