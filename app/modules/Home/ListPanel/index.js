@@ -88,6 +88,9 @@ const ListPanel: FC<Props> = props => {
   const onSelectListHandler = event => {
     const videoIndex = event.nativeEvent.target.selectedIndex - 1;
     selectListByIndex(videoIndex);
+
+    const player = document.getElementById('tutorialPlayer');
+    setTimeout(() => player.play(), 500);
   };
 
   const componentDidMount = () => {

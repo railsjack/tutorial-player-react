@@ -45,9 +45,7 @@ const PlayerPanel: FC<Props> = props => {
       videoInfoCopy.tutorialTitle = '';
 
       dispatch(setVideoInfo(videoInfoCopy));
-      setTimeout(() => {
-        player.play();
-      }, 500);
+      setTimeout(() => player.play(), 500);
     };
   }, [mainState.videoInfo]);
 
