@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import Helper from '../../utils/helper';
+import Helper from '../../../utils/helper';
 import styles from './styles';
 type Props = {
   videoIndex: number

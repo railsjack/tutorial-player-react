@@ -2,12 +2,19 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
-function writeListFile(arrList, varName, fileName, dirPath) {
-  let newArrList = arrList.map(function(item) {
+function writeListFile(arrList1, arrList2, fileName, dirPath) {
+  let newArrList1 = arrList1.map(function(item) {
     return item.replace(dirPath + '/', '');
   });
-  let content = newArrList.join('",\n"');
-  content = 'var ' + varName + ' = [\n"' + content + '"\n];';
+  let newArrList2 = arrList2.map(function(item) {
+    return item.replace(dirPath + '/', '');
+  });
+
+  var content = '';
+  for (var i = 0; i < newArrList1.length; i++) {
+    content += `,\n\t[\n\t\t"${newArrList1[i]}",\n\t\t"${newArrList2[i]}"\n\t]`;
+  }
+  content = `[${content.substr(1)}\n]`;
   fs.writeFileSync(dirPath + '/' + fileName, content);
 }
 
@@ -56,9 +63,7 @@ module.exports = (dirPath, cb) => {
     }
 
     const newDirPath = dirPath.replace(/\\/g, '/');
-    writeListFile(mp4_files, 'mp4_files', 'list_mp4.js', newDirPath);
-    writeListFile(vtt_files, 'subtitles', 'list_subtitle.js', newDirPath);
-
+    writeListFile(mp4_files, vtt_files, 'list.json', newDirPath);
     cb({ result: true });
   }
 };

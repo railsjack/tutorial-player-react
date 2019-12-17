@@ -1,4 +1,4 @@
-import { SET_DEFAULT_PATH } from './_actions';
+import { SET_DEFAULT_PATH, SET_VIDEO_LIST } from './home_actions';
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -16,6 +16,23 @@ export default (state = {}, action) => {
 
     case SET_DEFAULT_PATH.FAILED:
       return { ...state, status: SET_DEFAULT_PATH.FAILED, listPath: null };
+      break;
+
+
+    case SET_VIDEO_LIST.DOING:
+      return { ...state, status: SET_VIDEO_LIST.DOING, videoList: null };
+      break;
+
+    case SET_VIDEO_LIST.SUCCESS:
+      return {
+        ...state,
+        status: SET_VIDEO_LIST.SUCCESS,
+        videoList: action.videoList
+      };
+      break;
+
+    case SET_VIDEO_LIST.FAILED:
+      return { ...state, status: SET_VIDEO_LIST.FAILED, videoList: null };
       break;
 
     default:

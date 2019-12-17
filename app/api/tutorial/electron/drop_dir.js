@@ -2,7 +2,7 @@ const { ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
-const createTutorialList = require('../utils/create_tutorial_list');
+const createTutorialList = require('./create_tutorial_list');
 
 ipcMain.on('Request', (event, dirPath) => {
   if (!fs.existsSync(dirPath)) {

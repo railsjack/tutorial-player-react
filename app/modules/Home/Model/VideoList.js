@@ -3,11 +3,22 @@ import Video from './Video';
 class VideoList {
   videos: Array<Video> = [];
   selectedIndex: number = 0;
+  basePath: string;
 
   constructor(params) {
-    if (params.videos) this.videos = params.videos;
+    this.set(params);
+  }
+
+  set(params) {
     if (params.selectedIndex) this.selectedIndex = params.selectedIndex;
+    if (params.basePath) this.basePath = params.basePath;
+    if (params.videos) {
+      this.videos = [];
+      params.videos.map(videoData => {
+        this.videos.push(new Video(videoData));
+      });
+    }
   }
 }
 
-export default VideoList;
+export default new VideoList({});
