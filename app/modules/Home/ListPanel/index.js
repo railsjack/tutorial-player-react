@@ -1,31 +1,13 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Helper from '../../../utils/helper';
-import TutorialAPI, { showError } from '../../../api/tutorial/web';
 import { Select, Option } from '../../../components';
 
-import {
-  setListPath,
-  SET_DEFAULT_PATH,
-  setVideoList,
-  SET_VIDEO_LIST
-} from '../_reducers/home_actions';
+import { setDefaultPath, setVideoInfo } from '../_reducers/home_actions';
 
 import styles from './styles';
 
-const dataArray = [
-  'asdfasdfd a sdfasdf1/asdfasdfasdf as df asd1',
-  'asdfasdfd a sdfasdf1/asdfasdfasdf as df asd2',
-  'asdfasdfd a sdfasdf1/asdfasdfasdf as df asd3',
-  'asdfasdfd a sdfasdf2/asdfasdfasdf as df asd4',
-  'asdfasdfd a sdfasdf2/asdfasdfasdf as df asd5',
-  'asdfasdfd a sdfasdf2/asdfasdfasdf as df asd6',
-  'asdfasdfd a sdfasdf2/asdfasdfasdf as df asd7',
-  'asdfasdfd a sdfasdf3/asdfasdfasdf as df asd8',
-  'asdfasdfd a sdfasdf3/asdfasdfasdf as df asd9'
-];
-
-const renderItem = (dirNames, { item, index }) => {
+const renderItem = ({ dirNames, item, index }) => {
   const subTitlePathArr = item.split(/\//gi);
   const dirName = Helper.getHumanTitle(subTitlePathArr[0]);
   const fileName = Helper.getHumanTitle(subTitlePathArr[1]);
@@ -54,43 +36,79 @@ const ListPanel: FC<Props> = props => {
 
   const dispatch = useDispatch();
   const mainState = useSelector(state => state.Main);
-  const openDirectoryHandler = () => {
-    const selectedDirectory = Helper.selectDirectory();
+  const [videoList, setVideoList] = useState([]);
+
+  const openDirectoryHandler = async () => {
+    const selectedDirectory = Helper.selectDirectory(mainState.defaultPath);
     if (selectedDirectory) {
-      // selectedDirectory[0]
-      // loadVideos(listPath);
-      TutorialAPI.createListJSON(selectedDirectory[0])
-        .then(result => {
-          if (result.success) {
-            alert(result.message);
-            console.log('createdPath', result.createdPath);
-            dispatch(setListPath(result.createdPath));
-          }
-        })
-        .catch(error => {
-          showError(error);
-        });
+      const result = await dispatch(setDefaultPath(selectedDirectory[0]));
+      if (result.success) {
+        loadVideos(mainState.defaultPath);
+        setTimeout(() => {
+          selectListByIndex(-1);
+        }, 500);
+      }
     }
   };
 
+  const loadVideos = async path => {
+    const videoDatas = await Helper.getJSON(path + '/list.json');
+    const videoList = [];
+    videoDatas.map(videoData => {
+      videoList.push({
+        mp4: videoData[0],
+        subtitle: videoData[1]
+      });
+    });
+    setVideoList(videoList);
+  };
+
+  const selectListByIndex = index => {
+    let videoInfo;
+    if (index === -1) {
+      videoInfo = {
+        videoIndex: -1,
+        mp4: '',
+        subtitle: '',
+        tutorialTitle: Helper.baseDirName(mainState.defaultPath)
+      };
+    } else {
+      videoInfo = {
+        videoIndex: index,
+        mp4: videoList[index].mp4,
+        subtitle: Helper.getHumanTitle(videoList[index].subtitle),
+        tutorialTitle: ''
+      };
+    }
+    dispatch(setVideoInfo(videoInfo));
+  };
+
   const onSelectListHandler = event => {
-    props.onSelectList && props.onSelectList(event.target.value);
+    const videoIndex = event.nativeEvent.target.selectedIndex - 1;
+    selectListByIndex(videoIndex);
   };
 
   const componentDidMount = () => {
+    if (mainState.defaultPath) {
+      loadVideos(mainState.defaultPath);
+    }
     return componentWillUnmount;
   };
   const componentWillUnmount = () => {};
-  useEffect(componentDidMount, []);
+  useEffect(componentDidMount, [mainState.defaultPath]);
 
   const dirNames = [];
+  const subtitlesArray = videoList.map(video => video.subtitle);
+  const selectedIndex =
+    mainState && mainState.videoInfo ? mainState.videoInfo.videoIndex : 0;
   return (
     <div style={styles.list_panel}>
       <Select
+        value={selectedIndex}
         style={styles.list}
-        data={dataArray}
+        data={subtitlesArray}
         onChange={onSelectListHandler}
-        renderItem={({ item, index }) => renderItem(dirNames, { item, index })}
+        renderItem={({ item, index }) => renderItem({ dirNames, item, index })}
       />
       <button onClick={openDirectoryHandler} style={styles.list_load_button}>
         ...

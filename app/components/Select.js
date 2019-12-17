@@ -13,7 +13,7 @@ const Option: FC<Props> = props => {
 
 const Select: FC<Props> = props => {
   return (
-    <select onChange={props.onChange} style={props.style}>
+    <select value={props.value} onChange={props.onChange} style={props.style}>
       {props.data.map((item, index) => props.renderItem({ item, index }))}
     </select>
   );

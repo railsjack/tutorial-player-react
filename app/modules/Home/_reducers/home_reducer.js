@@ -1,38 +1,50 @@
-import { SET_DEFAULT_PATH, SET_VIDEO_LIST } from './home_actions';
-
-export default (state = {}, action) => {
+import {
+  SET_DEFAULT_PATH,
+  SET_VIDEO_INFO
+} from './home_actions';
+const initialState = {
+  defaultPath: '',
+  videoInfo: {},
+  status: '',
+};
+export default (state = initialState, action) => {
   switch (action.type) {
     case SET_DEFAULT_PATH.DOING:
-      return { ...state, status: SET_DEFAULT_PATH.DOING, listPath: null };
+      return {
+        ...state,
+        status: SET_DEFAULT_PATH.DOING,
+        videoInfo: {},
+        defaultPath: ''
+      };
       break;
 
     case SET_DEFAULT_PATH.SUCCESS:
       return {
         ...state,
         status: SET_DEFAULT_PATH.SUCCESS,
-        listPath: action.listPath
+        defaultPath: action.defaultPath,
+        videoInfo: {}
       };
       break;
 
     case SET_DEFAULT_PATH.FAILED:
-      return { ...state, status: SET_DEFAULT_PATH.FAILED, listPath: null };
+      return { ...state, status: SET_DEFAULT_PATH.FAILED, defaultPath: '' };
       break;
 
-
-    case SET_VIDEO_LIST.DOING:
-      return { ...state, status: SET_VIDEO_LIST.DOING, videoList: null };
+    case SET_VIDEO_INFO.DOING:
+      return { ...state, status: SET_VIDEO_INFO.DOING, videoInfo: {} };
       break;
 
-    case SET_VIDEO_LIST.SUCCESS:
+    case SET_VIDEO_INFO.SUCCESS:
       return {
         ...state,
-        status: SET_VIDEO_LIST.SUCCESS,
-        videoList: action.videoList
+        status: SET_VIDEO_INFO.SUCCESS,
+        videoInfo: action.videoInfo
       };
       break;
 
-    case SET_VIDEO_LIST.FAILED:
-      return { ...state, status: SET_VIDEO_LIST.FAILED, videoList: null };
+    case SET_VIDEO_INFO.FAILED:
+      return { ...state, status: SET_VIDEO_INFO.FAILED, videoInfo: {} };
       break;
 
     default:

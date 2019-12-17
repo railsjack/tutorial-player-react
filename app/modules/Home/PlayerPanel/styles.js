@@ -1,9 +1,26 @@
 export default {
-  player_panel: {
+  container: {
     position: 'relative',
     float: 'right',
     width: '100%',
-    height: 'calc(100% - 33px)'
+    height: 'calc(100% - 33px)',
+  },
+  tutorial_title: {
+    width: '70%',
+    height: '150px',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: '-100px',
+    marginLeft: '-35%',
+    textAlign: 'center',
+    display: 'table',
+  },
+  tutorial_title_text: {
+    verticalAlign: 'middle',
+    display: 'table-cell',
+    fontSize: '20pt'
   },
   video_title: {
     width: '80%',

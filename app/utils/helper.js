@@ -37,10 +37,9 @@ class Helper {
     });
   }
 
-  selectDirectory() {
+  selectDirectory(defaultPath: string) {
     const { ipcRenderer, remote } = require('electron');
     const app = remote.app;
-    const defaultPath = app.getPath('documents');
     const browserWindow = remote.getCurrentWindow();
     const dialog = require('electron').remote.dialog;
     const selectedDirectory = dialog.showOpenDialogSync(browserWindow, {
@@ -49,6 +48,18 @@ class Helper {
     });
     return selectedDirectory;
   }
+
+
+  
+  getConf = key => {
+    return (JSON.parse(localStorage.getItem(key)));
+  };
+
+  setConf = (key, value) => {
+    const newValue =  (value);
+    localStorage.setItem(key, JSON.stringify(newValue));
+  };
+
 }
 
 export default new Helper();
