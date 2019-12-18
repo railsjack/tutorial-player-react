@@ -6,7 +6,7 @@ export default {
     height: '100%',
     transition: 'width 0.3s',
     overflow: 'visible',
-    backgroundColor: 'rgb(22, 25, 34)'
+    backgroundColor: 'rgba(22, 25, 34, .9)',
   },
   left_panel_open: {
     width: '400px'
@@ -28,10 +28,16 @@ export default {
     backgroundColor: '#111'
   },
   control_button_open: {
-    paddingRight: 2,
+    paddingRight: 2
   },
   list: {
-    width: '100%',
-    height: '100%'
+    height: '100%',
+    padding: 0,
+    margin: 20,
+  },
+  list_item: {
+    cursor: 'pointer',
+    height: 30,
+    marginRight: 20,
   }
 };

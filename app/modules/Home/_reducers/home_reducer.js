@@ -1,11 +1,9 @@
-import {
-  SET_DEFAULT_PATH,
-  SET_VIDEO_INFO
-} from './home_actions';
+import { SET_DEFAULT_PATH, SET_VIDEO_INFO } from './home_actions';
 const initialState = {
   defaultPath: '',
+  listPaths: [],
   videoInfo: {},
-  status: '',
+  status: ''
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -18,11 +16,22 @@ export default (state = initialState, action) => {
       };
       break;
 
+    case SET_DEFAULT_PATH.INITIAL:
+      return {
+        ...state,
+        status: SET_DEFAULT_PATH.INITIAL
+      };
+      break;
     case SET_DEFAULT_PATH.SUCCESS:
+      const newListPaths = state.listPaths;
+      const alreadyExists =
+        state.listPaths && state.listPaths.indexOf(action.defaultPath) > -1;
+      !alreadyExists && newListPaths.push(action.defaultPath);
       return {
         ...state,
         status: SET_DEFAULT_PATH.SUCCESS,
         defaultPath: action.defaultPath,
+        listPaths: newListPaths,
         videoInfo: {}
       };
       break;

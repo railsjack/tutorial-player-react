@@ -34,7 +34,7 @@ const composeEnhancers =
 const enhancer = composeEnhancers(...enhancers);
 
 const persistConfig = {
-  key: 'router7',
+  key: 'router8',
   storage,
   blacklist: [],
 };

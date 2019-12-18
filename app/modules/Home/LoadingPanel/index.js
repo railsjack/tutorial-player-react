@@ -5,10 +5,9 @@ import styles from './styles';
 
 const LoadingPanel = props => {
   const mainState = useSelector(state => state.Main);
-
   return (
     <>
-      {mainState.status === SET_DEFAULT_PATH.DOING && (
+      {mainState.status === SET_DEFAULT_PATH.DOING &&  (
         <div style={styles.container}>
           <div style={styles.loading} className={'loader'}></div>
         </div>

@@ -2,21 +2,35 @@ import React, { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Helper from '../../../utils/helper';
 import { Select, Option } from '../../../components';
-import VideoListManager from '../Model/VideoListManager'
+import VideoListManager from '../Model/VideoListManager';
 
-import { setDefaultPath, setVideoInfo } from '../_reducers/home_actions';
+import {
+  initLoadingStatus,
+  setDefaultPath,
+  setVideoInfo
+} from '../_reducers/home_actions';
 
 import styles from './styles';
 
-const renderItem = ({ dirNames, item, index }) => {
-  const subTitlePathArr = item.split(/\//gi);
-  const dirName = Helper.getHumanTitle(subTitlePathArr[0]);
-  const fileName = Helper.getHumanTitle(subTitlePathArr[1]);
-  const isNewDir = dirNames.indexOf(dirName) === -1;
-  isNewDir && dirNames.push(dirName);
+const renderItem = ({ dirNames, item, index, topTitle }) => {
+  let isNewDir;
+  let dirName;
+  let fileName;
+
+  if (item.indexOf('/') > -1) {
+    const subTitlePathArr = item.split(/\//gi);
+    dirName = Helper.getHumanTitle(subTitlePathArr[0]);
+    fileName = Helper.getHumanTitle(subTitlePathArr[1]);
+    isNewDir = dirNames.indexOf(dirName) === -1;
+    isNewDir && dirNames.push(dirName);
+  } else {
+    isNewDir = false;
+    dirName = item;
+    fileName = item;
+  }
   return (
     <OptionItem key={String(index)}>
-      {index === 0 && <option>Select ...</option>}
+      {index === 0 && <option>{topTitle}</option>}
       {isNewDir ? <optgroup label={dirName} /> : null}
       <option value={index}>
         &nbsp;&nbsp;
@@ -42,12 +56,10 @@ const ListPanel: FC<Props> = props => {
   const openDirectoryHandler = async () => {
     const selectedDirectory = Helper.selectDirectory(mainState.defaultPath);
     if (selectedDirectory) {
-      const result = await dispatch(setDefaultPath(selectedDirectory[0]));
+      const result = await dispatch(setDefaultPath(selectedDirectory[0], true));
       if (result.success) {
-        loadVideos(mainState.defaultPath);
-        setTimeout(() => {
-          selectListByIndex(-1);
-        }, 500);
+        loadVideos(result.createdPath);
+        selectListByIndex(-1);
       }
     }
   };
@@ -90,11 +102,12 @@ const ListPanel: FC<Props> = props => {
     selectListByIndex(videoIndex);
 
     const player = document.getElementById('tutorialPlayer');
-    setTimeout(() => player.play(), 500);
+    setTimeout(() => player && player.play(), 500);
   };
 
   const componentDidMount = () => {
     if (mainState.defaultPath) {
+      dispatch(initLoadingStatus());
       loadVideos(mainState.defaultPath);
     }
     return componentWillUnmount;
@@ -106,15 +119,21 @@ const ListPanel: FC<Props> = props => {
   const subtitlesArray = videoList.map(video => video.subtitle);
   const selectedIndex =
     mainState && mainState.videoInfo ? mainState.videoInfo.videoIndex : 0;
+  const topTitle = Helper.baseDirName(mainState.defaultPath);
+
   return (
     <div style={styles.list_panel}>
-      <Select
-        value={selectedIndex}
-        style={styles.list}
-        data={subtitlesArray}
-        onChange={onSelectListHandler}
-        renderItem={({ item, index }) => renderItem({ dirNames, item, index })}
-      />
+      {subtitlesArray && (
+        <Select
+          value={selectedIndex}
+          style={styles.list}
+          data={subtitlesArray}
+          onChange={onSelectListHandler}
+          renderItem={({ item, index }) =>
+            renderItem({ dirNames, item, index, topTitle })
+          }
+        />
+      )}
       <button onClick={openDirectoryHandler} style={styles.list_load_button}>
         ...
       </button>

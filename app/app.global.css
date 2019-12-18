@@ -65,14 +65,16 @@ a:hover {
 
 
 
-
+.tutorial-list-item:hover{
+  text-decoration: underline;
+}
 
 
 
 
 .loader {
-  margin: 100px auto;
-  font-size: 25px;
+  margin: 85px auto;
+  font-size: 20px;
   width: 1em;
   height: 1em;
   border-radius: 50%;

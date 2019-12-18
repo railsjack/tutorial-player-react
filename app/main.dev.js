@@ -57,7 +57,7 @@ function initialize () {
       mainWindow = null
     })
 
-    // Menu.setApplicationMenu(null)
+    Menu.setApplicationMenu(null)
 
   }
 
