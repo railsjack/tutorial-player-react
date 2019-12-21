@@ -5,6 +5,7 @@ const path = require('path');
 const createTutorialList = require('./create_tutorial_list');
 
 ipcMain.on('Request', (event, dirPath) => {
+  console.log("ipcMain.on('Request'", dirPath);
   if (!fs.existsSync(dirPath)) {
     event.sender.send('Response', {
       code: 400,
@@ -17,15 +18,15 @@ ipcMain.on('Request', (event, dirPath) => {
       reason: 'NOTDIR',
       message: 'The file is not a directory'
     });
-  } else if (
-    path.basename(dirPath).match(/[^a-zA-Z0-9_\-\.\'\"\& ]+/g) !== null
-  ) {
-    event.sender.send('Response', {
-      code: 300,
-      reason: 'INVALID_DIRNAME',
-      message: 'The directory name is invalid',
-      data: path.basename(dirPath)
-    });
+    // } else if (
+    //   path.basename(dirPath).match(/[^a-zA-Z0-9_\-\.\'\"\& ]+/g) !== null
+    // ) {
+    //   event.sender.send('Response', {
+    //     code: 300,
+    //     reason: 'INVALID_DIRNAME',
+    //     message: 'The directory name is invalid',
+    //     data: path.basename(dirPath)
+    //   });
   } else {
     createTutorialList(dirPath, data => {
       if (data.result) {

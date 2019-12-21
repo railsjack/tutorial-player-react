@@ -1,14 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Helper from '../../../utils/helper';
 import { Select, Option } from '../../../components';
 import VideoListManager from '../Model/VideoListManager';
 
-import {
-  initLoadingStatus,
-  setDefaultPath,
-  setVideoInfo
-} from '../_reducers/home_actions';
+import { initLoadingStatus, setDefaultPath } from '../_reducers/home_actions';
+
+import { setPlayInfo } from '../_reducers/playinfo_actions';
 
 import styles from './styles';
 
@@ -47,97 +45,104 @@ const OptionItem = props => {
 type Props = {};
 
 const ListPanel: FC<Props> = props => {
-  console.log('===== ListPanel');
-
   const dispatch = useDispatch();
+  // const mainState = {defaultPath: ''};
   const mainState = useSelector(state => state.Main);
+  const playInfo = useSelector(state => state.PlayInfo);
+
   const [videoList, setVideoList] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const openDirectoryHandler = async () => {
     const selectedDirectory = Helper.selectDirectory(mainState.defaultPath);
     if (selectedDirectory) {
       const result = await dispatch(setDefaultPath(selectedDirectory[0], true));
       if (result.success) {
-        loadVideos(result.createdPath);
+        VideoListManager.loadListFromJSON(result.createdPath);
         selectListByIndex(-1);
       }
     }
   };
 
-  const loadVideos = async path => {
-    const videoDatas = await Helper.getJSON(path + '/list.json');
-    const videoList = [];
-    videoDatas.map(videoData => {
-      videoList.push({
-        mp4: videoData[0],
-        subtitle: videoData[1]
-      });
-    });
-    setVideoList(videoList);
-    VideoListManager.setList(videoList);
-  };
+  const selectListByIndex = useCallback(
+    (index, autoPlay = false) => {
+      const videoList = VideoListManager.getList();
+      let playInfo;
+      if (index === -1) {
+        playInfo = {
+          autoPlay,
+          playIndex: index,
+          hasVideo: false,
+          src: '',
+          title: '',
+          insteadTitle: Helper.baseDirName(mainState.defaultPath)
+        };
+      } else {
+        playInfo = {
+          srcBase: mainState.defaultPath,
+          autoPlay,
+          playIndex: index,
+          hasVideo: true,
+          src: mainState.defaultPath + '/' + videoList[index].mp4,
+          title: Helper.getHumanTitle(videoList[index].subtitle),
+          insteadTitle: ''
+        };
+      }
 
-  const selectListByIndex = index => {
-    let videoInfo;
-    if (index === -1) {
-      videoInfo = {
-        videoIndex: -1,
-        mp4: '',
-        subtitle: '',
-        tutorialTitle: Helper.baseDirName(mainState.defaultPath)
-      };
-    } else {
-      videoInfo = {
-        videoIndex: index,
-        mp4: videoList[index].mp4,
-        subtitle: Helper.getHumanTitle(videoList[index].subtitle),
-        tutorialTitle: ''
-      };
-    }
-    dispatch(setVideoInfo(videoInfo));
-  };
+      dispatch(setPlayInfo(playInfo));
+    },
+    [mainState.defaultPath]
+  );
 
   const onSelectListHandler = event => {
-    const videoIndex = event.nativeEvent.target.selectedIndex - 1;
-    selectListByIndex(videoIndex);
-
-    const player = document.getElementById('tutorialPlayer');
-    setTimeout(() => player && player.play(), 500);
+    const selectedIndex = event.nativeEvent.target.selectedIndex - 1;
+    selectListByIndex(selectedIndex, true);
+    setSelectedIndex(selectedIndex, true);
   };
 
   const componentDidMount = () => {
     if (mainState.defaultPath) {
       dispatch(initLoadingStatus());
-      loadVideos(mainState.defaultPath);
+      const loadVideoList = async () => {
+        await VideoListManager.loadListFromJSON(mainState.defaultPath);
+        setVideoList(VideoListManager.getList());
+        setTimeout(() => {
+          if (playInfo.playIndex != undefined) {
+            selectListByIndex(playInfo.playIndex);
+            setSelectedIndex(playInfo.playIndex);
+          }
+        }, 1000);
+      };
+      loadVideoList();
     }
     return componentWillUnmount;
   };
   const componentWillUnmount = () => {};
-  useEffect(componentDidMount, [mainState.defaultPath]);
+  useEffect(componentDidMount, [mainState.defaultPath, playInfo.playIndex]);
 
-  const dirNames = [];
   const subtitlesArray = videoList.map(video => video.subtitle);
-  const selectedIndex =
-    mainState && mainState.videoInfo ? mainState.videoInfo.videoIndex : 0;
   const topTitle = Helper.baseDirName(mainState.defaultPath);
 
+  const dirNames = [];
   return (
-    <div style={styles.list_panel}>
-      {subtitlesArray && (
-        <Select
-          value={selectedIndex}
-          style={styles.list}
-          data={subtitlesArray}
-          onChange={onSelectListHandler}
-          renderItem={({ item, index }) =>
-            renderItem({ dirNames, item, index, topTitle })
-          }
-        />
-      )}
-      <button onClick={openDirectoryHandler} style={styles.list_load_button}>
-        ...
-      </button>
-    </div>
+    <>
+      <div style={styles.list_panel}>
+        {subtitlesArray && (
+          <Select
+            value={selectedIndex}
+            style={styles.list}
+            data={subtitlesArray}
+            onChange={onSelectListHandler}
+            renderItem={({ item, index }) =>
+              renderItem({ dirNames, item, index, topTitle })
+            }
+          />
+        )}
+        <button onClick={openDirectoryHandler} style={styles.list_load_button}>
+          ..
+        </button>
+      </div>
+    </>
   );
 };
 

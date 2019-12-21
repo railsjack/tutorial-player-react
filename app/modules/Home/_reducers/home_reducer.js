@@ -1,4 +1,4 @@
-import { SET_DEFAULT_PATH, SET_VIDEO_INFO } from './home_actions';
+import { SET_DEFAULT_PATH } from './home_actions';
 const initialState = {
   defaultPath: '',
   listPaths: [],
@@ -38,22 +38,6 @@ export default (state = initialState, action) => {
 
     case SET_DEFAULT_PATH.FAILED:
       return { ...state, status: SET_DEFAULT_PATH.FAILED, defaultPath: '' };
-      break;
-
-    case SET_VIDEO_INFO.DOING:
-      return { ...state, status: SET_VIDEO_INFO.DOING, videoInfo: {} };
-      break;
-
-    case SET_VIDEO_INFO.SUCCESS:
-      return {
-        ...state,
-        status: SET_VIDEO_INFO.SUCCESS,
-        videoInfo: action.videoInfo
-      };
-      break;
-
-    case SET_VIDEO_INFO.FAILED:
-      return { ...state, status: SET_VIDEO_INFO.FAILED, videoInfo: {} };
       break;
 
     default:

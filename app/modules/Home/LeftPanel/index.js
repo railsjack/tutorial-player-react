@@ -2,7 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { UL, LI } from '../../../components';
 import Helper from '../../../utils/helper';
-import { setDefaultPath, setVideoInfo } from '../_reducers/home_actions';
+import { setDefaultPath } from '../_reducers/home_actions';
+import { setPlayInfo } from '../_reducers/playinfo_actions';
 
 import styles from './styles';
 
@@ -29,11 +30,11 @@ const LiItem = props => {
 };
 
 const LeftPanel = props => {
-  console.log('===== Left Panel');
   const dispatch = useDispatch();
   const mainState = useSelector(state => state.Main);
   const [openStatus, setOpenStatus] = useState(false);
   const [openStatus2, setOpenStatus2] = useState(false);
+
   const togglePanel = () => {
     setOpenStatus(!openStatus);
     setTimeout(
@@ -46,22 +47,14 @@ const LeftPanel = props => {
 
   const onClickHandler = useCallback(fullPath => {
     togglePanel();
+    dispatch(setPlayInfo({ playIndex: -1 }));
     dispatch(setDefaultPath(fullPath));
-
-    setTimeout(() => {
-      const videoInfo = {
-        videoIndex: -1,
-        mp4: '',
-        subtitle: '',
-        tutorialTitle: Helper.baseDirName(mainState.defaultPath)
-      };
-      dispatch(setVideoInfo(videoInfo));
-    }, 500);
   });
 
   const componentDidMount = () => {
-    console.log('===== Left Panel componentDidMount');
-    console.log('mainState.listPaths', mainState.listPaths);
+    if (mainState.listPaths.length > 0) {
+      console.log('===== Left Panel');
+    }
     return componentWillUnmount;
   };
   const componentWillUnmount = () => {};

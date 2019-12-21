@@ -2,9 +2,8 @@ import { createTypes, createAction } from '../../../utils/actions';
 import TutorialAPI, { showError } from '../../../api/tutorial/web';
 
 const SET_DEFAULT_PATH = createTypes('PLAYER_SET_DEFAULT_PATH');
-const SET_VIDEO_INFO = createTypes('PLAYER_SET_VIDEO_INFO');
 
-const setDefaultPath = (path, reCreate = true) => {
+const setDefaultPath = (path, reCreate = false) => {
   return dispatch =>
     new Promise((resolve, eject) => {
       const setDefaultPathAction = {
@@ -46,23 +45,6 @@ const setDefaultPath = (path, reCreate = true) => {
     });
 };
 
-const setVideoInfo = videoInfo => {
-  return dispatch => {
-    const setDefaultPathAction = {
-      do: () => createAction(SET_VIDEO_INFO.DOING, {}),
-      success: (videoInfo: any) =>
-        createAction(SET_VIDEO_INFO.SUCCESS, { videoInfo }),
-      failed: (error: any) => createAction(SET_VIDEO_INFO.FAILED, { error })
-    };
-
-    try {
-      dispatch(setDefaultPathAction.success(videoInfo));
-    } catch (error) {
-      dispatch(setDefaultPathAction.failed(error));
-    }
-  };
-};
-
 const initLoadingStatus = () => {
   return dispatch => {
     const setDefaultPathAction = {
@@ -77,6 +59,4 @@ export {
   initLoadingStatus,
   SET_DEFAULT_PATH,
   setDefaultPath,
-  SET_VIDEO_INFO,
-  setVideoInfo
 };

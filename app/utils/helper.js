@@ -21,22 +21,6 @@ class Helper {
     return path.split(/[\\]/gi).pop();
   }
 
-  async getJSON(url, callback) {
-    return new Promise((resolve, eject) => {
-      let xhr = new XMLHttpRequest();
-      xhr.onload = () => {
-        try {
-          resolve(JSON.parse(xhr.responseText));
-        } catch (error) {
-          eject(error);
-        }
-      };
-      xhr.onerror = error => eject(error);
-      xhr.open('GET', url, true);
-      xhr.send();
-    });
-  }
-
   selectDirectory(defaultPath: string) {
     const { ipcRenderer, remote } = require('electron');
     const app = remote.app;
