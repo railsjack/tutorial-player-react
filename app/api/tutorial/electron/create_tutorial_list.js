@@ -35,13 +35,15 @@ function generateSubtitle(mp4_files, vtt_files, srt_files) {
   mp4_files.map((mp4_file, index) => {
     const srt_file = srt_files[index];
     let vtt_file = vtt_files[index];
-    if(!vtt_file) {
-      vtt_file = srt_file.substr(0, srt_file.length - 4) + '.vtt';
+    if (srt_file || vtt_file) {
+      if (!vtt_file) {
+        vtt_file = srt_file.substr(0, srt_file.length - 4) + '.vtt';
+      }
+      if (fs.existsSync(srt_file) && !fs.existsSync(vtt_file)) {
+        createVTTFromSRT(srt_file, vtt_file);
+      }
+      subtitle_files.push(vtt_file);
     }
-    if (fs.existsSync(srt_file) && !fs.existsSync(vtt_file)) {
-      createVTTFromSRT(srt_file, vtt_file);
-    }
-    subtitle_files.push(vtt_file);
   });
   return subtitle_files;
 }

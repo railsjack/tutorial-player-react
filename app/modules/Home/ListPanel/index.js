@@ -46,6 +46,7 @@ const OptionItem = props => {
 type Props = {};
 
 const ListPanel: FC<Props> = props => {
+  console.log('ListPanel');
   const dispatch = useDispatch();
   // const mainState = {defaultPath: ''};
   const mainState = useSelector(state => state.Main);
@@ -125,7 +126,9 @@ const ListPanel: FC<Props> = props => {
   const componentWillUnmount = () => {};
   useEffect(componentDidMount, [mainState.defaultPath, playInfo.playIndex]);
 
-  const subtitlesArray = videoList.map(video => video.mp4);
+  const subtitlesArray = mainState.defaultPath
+    ? videoList.map(video => video.mp4)
+    : [];
   const topTitle = Helper.baseDirName(mainState.defaultPath);
 
   const dirNames = [];

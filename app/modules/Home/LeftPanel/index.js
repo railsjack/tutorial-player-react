@@ -2,24 +2,31 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { UL, LI } from '../../../components';
 import Helper from '../../../utils/helper';
-import { setDefaultPath } from '../_reducers/home_actions';
+import { setDefaultPath, removeDefaultPath } from '../_reducers/home_actions';
 import { setPlayInfo } from '../_reducers/playinfo_actions';
 
 import styles from './styles';
 
-const renderItem = ({ item, index, onClickHandler }) => {
+const renderItem = ({ item, index, onClickHandler, removePressHandler }) => {
   return (
     <LiItem key={String(index)}>
-      <LI
-        onClick={() => {
-          onClickHandler(item);
-        }}
-        className={'tutorial-list-item'}
-        title={item}
-        fullPath={item}
-        style={styles.list_item}
-      >
-        {index + 1}. {Helper.baseDirName(item)}
+      <LI title={item} fullPath={item} style={styles.list_item}>
+        <a
+          onClick={() => {
+            onClickHandler(item);
+          }}
+        >
+          {Helper.baseDirName(item)}
+        </a>
+        <button
+          onClick={() => {
+            removePressHandler(item);
+          }}
+          title={"Delete"}
+          style={styles.list_item_remove}
+        >
+          X
+        </button>
       </LI>
     </LiItem>
   );
@@ -49,6 +56,11 @@ const LeftPanel = props => {
     togglePanel();
     dispatch(setPlayInfo({ playIndex: -1 }));
     dispatch(setDefaultPath(fullPath));
+  });
+
+  const removePressHandler = useCallback(fullPath => {
+    dispatch(setPlayInfo({ playIndex: -1 }));
+    dispatch(removeDefaultPath(fullPath));
   });
 
   const componentDidMount = () => {
@@ -84,7 +96,7 @@ const LeftPanel = props => {
           }}
           data={mainState.listPaths}
           renderItem={({ item, index }) =>
-            renderItem({ item, index, onClickHandler })
+            renderItem({ item, index, onClickHandler, removePressHandler })
           }
         />
       )}

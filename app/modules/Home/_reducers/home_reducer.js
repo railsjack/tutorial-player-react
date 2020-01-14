@@ -1,4 +1,4 @@
-import { SET_DEFAULT_PATH } from './home_actions';
+import { SET_DEFAULT_PATH, REMOVE_DEFAULT_PATH } from './home_actions';
 const initialState = {
   defaultPath: '',
   listPaths: [],
@@ -23,7 +23,7 @@ export default (state = initialState, action) => {
       };
       break;
     case SET_DEFAULT_PATH.SUCCESS:
-      const newListPaths = state.listPaths;
+      let newListPaths = state.listPaths;
       const alreadyExists =
         state.listPaths && state.listPaths.indexOf(action.defaultPath) > -1;
       !alreadyExists && newListPaths.push(action.defaultPath);
@@ -40,6 +40,19 @@ export default (state = initialState, action) => {
       return { ...state, status: SET_DEFAULT_PATH.FAILED, defaultPath: '' };
       break;
 
+    case REMOVE_DEFAULT_PATH.SUCCESS:
+      let newListPaths2 = state.listPaths;
+      console.log('action.defaultPath', action.defaultPath)
+      const position = state.listPaths.indexOf(action.defaultPath);
+      if (position > -1) newListPaths2.splice(position, 1);
+      return {
+        ...state,
+        status: REMOVE_DEFAULT_PATH.SUCCESS,
+        defaultPath: '',
+        listPaths: newListPaths2,
+        videoInfo: {}
+      };
+      break;
     default:
       return state;
       break;

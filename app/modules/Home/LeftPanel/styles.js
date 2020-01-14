@@ -34,10 +34,23 @@ export default {
     height: '100%',
     padding: 0,
     margin: 20,
+    marginLeft: 40,
   },
   list_item: {
-    cursor: 'pointer',
-    height: 30,
     marginRight: 20,
+    marginTop: 10,
+    position: 'relative',
+    paddingRight: 20,
+    listStyle: 'decimal',
+  },
+  list_item_remove: {
+    position: 'absolute',
+    top: 0,
+    right: -20,
+    backgroundColor: 'transparent',
+    color: 'white',
+    fontWeight: 'bold',
+    borderWidth: 0,
+    cursor: 'pointer'
   }
 };
