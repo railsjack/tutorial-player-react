@@ -6,7 +6,6 @@ import Root from './containers/RootRedux';
 // import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 // const store = configureStore();
-
 window.__DEV__ = process.env.NODE_ENV !== 'production';
 
 ReactDOM.render(

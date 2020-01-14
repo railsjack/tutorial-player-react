@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Helper from '../../../utils/helper';
 import { Select, Option } from '../../../components';
 import VideoListManager from '../Model/VideoListManager';
+import PlayerPanel from '../PlayerPanel';
 
 import { initLoadingStatus, setDefaultPath } from '../_reducers/home_actions';
 
@@ -48,7 +49,7 @@ const ListPanel: FC<Props> = props => {
   const dispatch = useDispatch();
   // const mainState = {defaultPath: ''};
   const mainState = useSelector(state => state.Main);
-  const playInfo = useSelector(state => state.PlayInfo);
+  const [playInfo, setPlayInfo2] = useState({});
 
   const [videoList, setVideoList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -58,8 +59,10 @@ const ListPanel: FC<Props> = props => {
     if (selectedDirectory) {
       const result = await dispatch(setDefaultPath(selectedDirectory[0], true));
       if (result.success) {
-        VideoListManager.loadListFromJSON(result.createdPath);
-        selectListByIndex(-1);
+        await VideoListManager.loadListFromJSON(result.createdPath);
+        setVideoList(VideoListManager.getList());
+        // setSelectedIndex(-1);
+        // dispatch(setPlayInfo({ playIndex: -1, hasVideo: false, src: '' }));
       }
     }
   };
@@ -84,12 +87,14 @@ const ListPanel: FC<Props> = props => {
           playIndex: index,
           hasVideo: true,
           src: mainState.defaultPath + '/' + videoList[index].mp4,
-          title: Helper.getHumanTitle(videoList[index].subtitle),
+          subtitle: mainState.defaultPath + '/' + videoList[index].subtitle,
+          title: Helper.getHumanTitle(videoList[index].mp4),
           insteadTitle: ''
         };
       }
 
       dispatch(setPlayInfo(playInfo));
+      setPlayInfo2(playInfo);
     },
     [mainState.defaultPath]
   );
@@ -106,12 +111,12 @@ const ListPanel: FC<Props> = props => {
       const loadVideoList = async () => {
         await VideoListManager.loadListFromJSON(mainState.defaultPath);
         setVideoList(VideoListManager.getList());
-        setTimeout(() => {
-          if (playInfo.playIndex != undefined) {
-            selectListByIndex(playInfo.playIndex);
-            setSelectedIndex(playInfo.playIndex);
-          }
-        }, 1000);
+        // setTimeout(() => {
+        //   if (playInfo.playIndex != undefined) {
+        //     selectListByIndex(playInfo.playIndex);
+        //     setSelectedIndex(playInfo.playIndex);
+        //   }
+        // }, 1000);
       };
       loadVideoList();
     }
@@ -120,7 +125,7 @@ const ListPanel: FC<Props> = props => {
   const componentWillUnmount = () => {};
   useEffect(componentDidMount, [mainState.defaultPath, playInfo.playIndex]);
 
-  const subtitlesArray = videoList.map(video => video.subtitle);
+  const subtitlesArray = videoList.map(video => video.mp4);
   const topTitle = Helper.baseDirName(mainState.defaultPath);
 
   const dirNames = [];
@@ -142,6 +147,7 @@ const ListPanel: FC<Props> = props => {
           ..
         </button>
       </div>
+      {playInfo.src && <PlayerPanel playInfo={playInfo} />}
     </>
   );
 };

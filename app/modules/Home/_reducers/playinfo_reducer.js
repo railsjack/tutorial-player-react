@@ -4,6 +4,7 @@ import VideoManager from '../Model/VideoListManager';
 
 const initialState = {
   src: '',
+  subtitle: '',
   title: '',
   insteadTitle: '',
   hasVideo: false,
@@ -23,13 +24,16 @@ export default (state = initialState, action) => {
       console.log('state', state);
       console.log('action', action);
       const videoList = VideoManager.getList();
-      const playIndex = state.playIndex;
+      let playIndex = state.playIndex;
+      if(playIndex < videoList.length - 1) playIndex++;
+      const src = state.srcBase + '/' + videoList[playIndex + 1].mp4;
       const playInfo = {
         autoPlay: true,
         playIndex: playIndex + 1,
-        src: state.srcBase + '/' + videoList[playIndex + 1].mp4,
-        title: Helper.getHumanTitle(videoList[playIndex + 1].subtitle),
-      }
+        src,
+        title: Helper.getHumanTitle(videoList[playIndex + 1].subtitle)
+      };
+      Helper.setConf(src, 0);
       return {
         ...state,
         status: GO_NEXT_PLAY.SUCCESS,

@@ -13,7 +13,7 @@ export default {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /assets\/js\/videosub\.js/],
         use: {
           loader: 'babel-loader',
           options: {

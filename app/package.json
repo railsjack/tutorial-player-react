@@ -3,7 +3,7 @@
   "productName": "Tutorial Player",
   "version": "0.2.1",
   "description": "Player for Tutorials over Internet",
-  "main": "./main.prod.js",
+  "main": "./main.dev.js",
   "author": {
     "name": "Nahrae Jin",
     "email": "jinnahrae@gmail.com",

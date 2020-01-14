@@ -8,11 +8,18 @@ import styles from './styles';
 
 const PlayerPanel: FC<Props> = props => {
   const dispatch = useDispatch();
-  const playInfo = useSelector(state => state.PlayInfo);
+  // const playInfo = useSelector(state => state.PlayInfo);
+
+  const {playInfo} = props;
 
   const gotoPlayTime = time => {
     const player = document.getElementById('tutorialPlayer');
     player && (player.currentTime = time);
+  };
+
+  const showSubtitle = time => {
+    const player = document.getElementById('tutorialPlayer');
+    player && (player.textTracks[0].mode = 'showing');
   };
 
   const recordPlayTime = () => {
@@ -35,17 +42,20 @@ const PlayerPanel: FC<Props> = props => {
     } else {
       gotoPlayTime(recordedPlayTime());
       recordPlayTime(playInfo.src);
+      showSubtitle();
     }
+
     return componentWillUnmount;
   };
   const componentWillUnmount = () => {
     console.log('===== componentWillUnmount');
   };
 
-  useEffect(componentDidMount, [playInfo.src]);
+  useEffect(componentDidMount, [playInfo]);
 
   return (
     <div style={styles.container}>
+      
       <div>
         {playInfo.hasVideo && (
           <div style={styles.video_title}>{playInfo.title}</div>
@@ -56,17 +66,19 @@ const PlayerPanel: FC<Props> = props => {
         controls
         width={'100%'}
         height={'100%'}
-        preload={'true'}
-        src={playInfo.src}
+        preload={'metadata'}
         autoPlay={playInfo.autoPlay}
+        poster=""
+        src={playInfo.src}
         style={{ display: playInfo.hasVideo ? 'block' : 'none' }}
         onEnded={onEndedHandler}
       >
         <track
           kind={'captions'}
           id={'playerCaption'}
-          src={''}
+          src={playInfo.subtitle.replace(/\//gi, '\\')}
           srcLang={'en'}
+          mode={'showing'}
           label={'English'}
         />
       </video>

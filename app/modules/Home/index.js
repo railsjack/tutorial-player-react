@@ -50,7 +50,7 @@ const Home: FC<Props> = props => {
     >
       <LeftPanel />
       <ListPanel />
-      <PlayerPanel />
+      
       <LoadingPanel />
     </div>
   );
