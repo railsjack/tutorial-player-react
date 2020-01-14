@@ -15,5 +15,5 @@ $ yarn build
 Need to confirm app/package.json  
 "main": "./main.prod.js",
 ```
-$ yarn build package-win
+$ yarn package-win
 ```

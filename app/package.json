@@ -1,7 +1,7 @@
 {
   "name": "tutorial-player",
   "productName": "Tutorial Player",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "description": "Player for Tutorials over Internet",
   "main": "./main.dev.js",
   "author": {

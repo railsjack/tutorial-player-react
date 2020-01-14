@@ -21,24 +21,26 @@ export default (state = initialState, action) => {
       break;
 
     case GO_NEXT_PLAY.SUCCESS:
-      console.log('state', state);
-      console.log('action', action);
       const videoList = VideoManager.getList();
       let playIndex = state.playIndex;
-      if(playIndex < videoList.length - 1) playIndex++;
-      const src = state.srcBase + '/' + videoList[playIndex + 1].mp4;
-      const playInfo = {
-        autoPlay: true,
-        playIndex: playIndex + 1,
-        src,
-        title: Helper.getHumanTitle(videoList[playIndex + 1].subtitle)
-      };
-      Helper.setConf(src, 0);
-      return {
-        ...state,
-        status: GO_NEXT_PLAY.SUCCESS,
-        ...playInfo
-      };
+      console.log('playInfo reducer', playIndex, videoList.length)
+      if (playIndex < videoList.length - 1) {
+        const src = state.srcBase + '/' + videoList[playIndex+1].mp4;
+        const playInfo = {
+          ...state.playInfo,
+          autoPlay: true,
+          playIndex: playIndex+1,
+          src,
+          title: Helper.getHumanTitle(videoList[playIndex+1].subtitle)
+        };
+        Helper.setConf(src, 0);
+        console.log('playInfo reducer', playInfo)
+        return {
+          ...state,
+          status: GO_NEXT_PLAY.SUCCESS,
+          ...playInfo
+        };
+      } else return state;
       break;
     default:
       return state;

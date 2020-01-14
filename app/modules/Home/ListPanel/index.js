@@ -50,6 +50,7 @@ const ListPanel: FC<Props> = props => {
   const dispatch = useDispatch();
   // const mainState = {defaultPath: ''};
   const mainState = useSelector(state => state.Main);
+  const playInfoState = useSelector(state => state.PlayInfo);
   const [playInfo, setPlayInfo2] = useState({});
 
   const [videoList, setVideoList] = useState([]);
@@ -101,6 +102,7 @@ const ListPanel: FC<Props> = props => {
   );
 
   const onSelectListHandler = event => {
+    console.log('const onSelectListHandler');
     const selectedIndex = event.nativeEvent.target.selectedIndex - 1;
     selectListByIndex(selectedIndex, true);
     setSelectedIndex(selectedIndex, true);
@@ -112,19 +114,24 @@ const ListPanel: FC<Props> = props => {
       const loadVideoList = async () => {
         await VideoListManager.loadListFromJSON(mainState.defaultPath);
         setVideoList(VideoListManager.getList());
-        // setTimeout(() => {
-        //   if (playInfo.playIndex != undefined) {
-        //     selectListByIndex(playInfo.playIndex);
-        //     setSelectedIndex(playInfo.playIndex);
-        //   }
-        // }, 1000);
       };
       loadVideoList();
+    }
+
+    if (playInfoState.playIndex) {
+      setTimeout(() => {
+        selectListByIndex(playInfoState.playIndex, true);
+        setSelectedIndex(playInfoState.playIndex);
+      }, 1000);
     }
     return componentWillUnmount;
   };
   const componentWillUnmount = () => {};
-  useEffect(componentDidMount, [mainState.defaultPath, playInfo.playIndex]);
+  useEffect(componentDidMount, [
+    mainState.defaultPath,
+    playInfo.playIndex,
+    playInfoState.playIndex
+  ]);
 
   const subtitlesArray = mainState.defaultPath
     ? videoList.map(video => video.mp4)
