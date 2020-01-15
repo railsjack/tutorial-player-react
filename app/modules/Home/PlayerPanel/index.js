@@ -10,7 +10,7 @@ const PlayerPanel: FC<Props> = props => {
   const dispatch = useDispatch();
   // const playInfo = useSelector(state => state.PlayInfo);
 
-  const {playInfo} = props;
+  const { playInfo } = props;
 
   const gotoPlayTime = time => {
     const player = document.getElementById('tutorialPlayer');
@@ -40,7 +40,7 @@ const PlayerPanel: FC<Props> = props => {
     if (!playInfo.hasVideo) {
       console.log('===== PlayerPanel');
     } else {
-      gotoPlayTime(recordedPlayTime());
+      if (playInfo.recordedPlay) gotoPlayTime(recordedPlayTime());
       recordPlayTime(playInfo.src);
       showSubtitle();
     }
@@ -55,7 +55,6 @@ const PlayerPanel: FC<Props> = props => {
 
   return (
     <div style={styles.container}>
-      
       <div>
         {playInfo.hasVideo && (
           <div style={styles.video_title}>{playInfo.title}</div>

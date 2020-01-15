@@ -52,6 +52,7 @@ const ListPanel: FC<Props> = props => {
   const mainState = useSelector(state => state.Main);
   const playInfoState = useSelector(state => state.PlayInfo);
   const [playInfo, setPlayInfo2] = useState({});
+  const [firstLoaded, setFirstLoaded] = useState(true);
 
   const [videoList, setVideoList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -70,7 +71,7 @@ const ListPanel: FC<Props> = props => {
   };
 
   const selectListByIndex = useCallback(
-    (index, autoPlay = false) => {
+    ({ index, autoPlay = false, recordedPlay = false }) => {
       const videoList = VideoListManager.getList();
       let playInfo;
       if (index === -1) {
@@ -83,12 +84,14 @@ const ListPanel: FC<Props> = props => {
           insteadTitle: Helper.baseDirName(mainState.defaultPath)
         };
       } else {
+        const src = mainState.defaultPath + '/' + videoList[index].mp4;
         playInfo = {
           srcBase: mainState.defaultPath,
           autoPlay,
+          recordedPlay,
           playIndex: index,
           hasVideo: true,
-          src: mainState.defaultPath + '/' + videoList[index].mp4,
+          src,
           subtitle: mainState.defaultPath + '/' + videoList[index].subtitle,
           title: Helper.getHumanTitle(videoList[index].mp4),
           insteadTitle: ''
@@ -104,8 +107,8 @@ const ListPanel: FC<Props> = props => {
   const onSelectListHandler = event => {
     console.log('const onSelectListHandler');
     const selectedIndex = event.nativeEvent.target.selectedIndex - 1;
-    selectListByIndex(selectedIndex, true);
-    setSelectedIndex(selectedIndex, true);
+    selectListByIndex({ index: selectedIndex, autoPlay: true });
+    setSelectedIndex(selectedIndex);
   };
 
   const componentDidMount = () => {
@@ -120,8 +123,14 @@ const ListPanel: FC<Props> = props => {
 
     if (playInfoState.playIndex) {
       setTimeout(() => {
-        selectListByIndex(playInfoState.playIndex, true);
+        const autoPlay = firstLoaded ? false : true;
+        selectListByIndex({
+          index: playInfoState.playIndex,
+          autoPlay,
+          recordedPlay: true
+        });
         setSelectedIndex(playInfoState.playIndex);
+        setFirstLoaded(false);
       }, 1000);
     }
     return componentWillUnmount;

@@ -30,18 +30,23 @@ function naturalSort(myArray) {
   return myArray.sort(collator.compare);
 }
 
-function generateSubtitle(mp4_files, vtt_files, srt_files) {
-  var subtitle_files = [];
+function generateSubtitle(mp4_files) {
+  let subtitle_files = [];
   mp4_files.map((mp4_file, index) => {
-    const srt_file = srt_files[index];
-    let vtt_file = vtt_files[index];
-    if (srt_file || vtt_file) {
-      if (!vtt_file) {
-        vtt_file = srt_file.substr(0, srt_file.length - 4) + '.vtt';
-      }
-      if (fs.existsSync(srt_file) && !fs.existsSync(vtt_file)) {
-        createVTTFromSRT(srt_file, vtt_file);
-      }
+    const mp4_file_without_ext = mp4_file.substr(0, mp4_file.length - 4);
+    const vtt_file = mp4_file_without_ext + '.vtt';
+    const srt_file = mp4_file_without_ext + '.srt';
+    const vtt_file_en = mp4_file_without_ext + '-en.vtt';
+    const srt_file_en = mp4_file_without_ext + '-en.srt';
+    if (fs.existsSync(vtt_file)) {
+      subtitle_files.push(vtt_file);
+    } else if (fs.existsSync(vtt_file_en)) {
+      subtitle_files.push(vtt_file_en);
+    } else if (fs.existsSync(srt_file)) {
+      subtitle_files.push(createVTTFromSRT(srt_file));
+    } else if (fs.existsSync(srt_file_en)) {
+      subtitle_files.push(createVTTFromSRT(srt_file_en));
+    } else {
       subtitle_files.push(vtt_file);
     }
   });
@@ -49,33 +54,30 @@ function generateSubtitle(mp4_files, vtt_files, srt_files) {
 }
 
 const createVTTFromSRT = srtPath => {
+  const vttPath = srtPath.substr(0, srtPath.length - 4) + '.vtt';
   try {
     let content = fs.readFileSync(srtPath, 'utf-8');
     if (content) {
-      content = content.replace(/(\.\d{2})/g, '$10');
+      content = content.replace(/([\.|\,]\d{2})/g, '$10');
       content = 'WEBVTT\n\n' + content;
-      const vttPath = srtPath.substr(0, srtPath.length - 4) + '.vtt';
       fs.writeFileSync(vttPath, content);
     }
+    console.log('vttPath', vttPath);
+    return vttPath;
   } catch (error) {
     console.log('error on createVTTFromSRT', error);
+    return vttPath;
   }
 };
 
 module.exports = (dirPath, cb) => {
   let mp4_files = glob.sync(path.join(dirPath, '/**/*.mp4'));
-  let srt_files = glob.sync(path.join(dirPath, '/**/*.srt'));
-  let vtt_files = glob.sync(path.join(dirPath, '/**/*.vtt'));
 
   if (mp4_files.length === 0) {
     cb({ result: false, reason: 'NO_VIDEO_FILES' });
   } else {
     mp4_files = naturalSort(mp4_files);
-    vtt_files = naturalSort(vtt_files);
-    srt_files = naturalSort(srt_files);
-
-    vtt_files = generateSubtitle(mp4_files, vtt_files, srt_files);
-
+    const vtt_files = generateSubtitle(mp4_files);
     const newDirPath = dirPath.replace(/\\/g, '/');
     writeListFile(mp4_files, vtt_files, 'list.json', newDirPath);
     cb({ result: true });
