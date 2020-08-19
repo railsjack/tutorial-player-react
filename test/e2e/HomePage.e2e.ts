@@ -3,7 +3,7 @@ import { ClientFunction, Selector } from 'testcafe';
 import { getPageUrl } from './helpers';
 
 const getPageTitle = ClientFunction(() => document.title);
-const counterSelector = Selector('[data-tid="counter"]');
+const counterSelector = Selector('[data-tid="mainState"]');
 const buttonsSelector = Selector('[data-tclass="btn"]');
 const clickToCounterLink = t =>
   t.click(Selector('a').withExactText('to Counter'));
@@ -39,11 +39,11 @@ test('should navigate to Counter with click on the "to Counter" link', async t =
     .eql('0');
 });
 
-test('should navigate to /counter', async t => {
+test('should navigate to /mainState', async t => {
   await t
     .click('a')
     .expect(getPageUrl())
-    .contains('/counter');
+    .contains('/mainState');
 });
 
 fixture`Counter Tests`
@@ -65,14 +65,14 @@ test('should display updated count after the descrement button click', async t =
     .eql('-1');
 });
 
-test('should not change even counter if odd button clicked', async t => {
+test('should not change even mainState if odd button clicked', async t => {
   await t
     .click(oddButton)
     .expect(getCounterText())
     .eql('0');
 });
 
-test('should change odd counter if odd button clicked', async t => {
+test('should change odd mainState if odd button clicked', async t => {
   await t
     .click(incrementButton)
     .click(oddButton)

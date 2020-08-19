@@ -17,8 +17,8 @@ exports[`Counter component should match exact snapshot 1`] = `
       </a>
     </div>
     <div
-      className="counter counter"
-      data-tid="counter"
+      className="mainState mainState"
+      data-tid="mainState"
     >
       1
     </div>

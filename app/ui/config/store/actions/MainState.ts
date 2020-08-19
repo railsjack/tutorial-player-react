@@ -1,4 +1,4 @@
-import { GetState, Dispatch } from '../reducers/types';
+import { Dispatch, GetState } from '../reducers/types';
 
 export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
 export const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
@@ -17,9 +17,9 @@ export function decrement() {
 
 export function incrementIfOdd() {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { counter } = getState();
+    const { mainState } = getState();
 
-    if (counter % 2 === 0) {
+    if (mainState) {
       return;
     }
 
