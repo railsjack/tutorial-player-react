@@ -15,10 +15,10 @@ import MenuBuilder from './menu';
 const installExtensions = async () => {
   const { session } = require('electron');
   await session.defaultSession.loadExtension(
-    path.join(__dirname, './extensions/react-devtool')
+    path.join(__dirname, '../extensions/react-devtool')
   );
   await session.defaultSession.loadExtension(
-    path.join(__dirname, './extensions/redux-devtool')
+    path.join(__dirname, '../extensions/redux-devtool')
   );
 };
 
@@ -55,11 +55,11 @@ const createWindow = async () => {
             enableRemoteModule: true
           }
         : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js')
+            preload: path.join(__dirname, '/../dist/renderer.prod.js')
           }
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.loadURL(`file://${__dirname}/../ui/app.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
